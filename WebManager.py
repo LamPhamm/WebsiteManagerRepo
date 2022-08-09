@@ -13,6 +13,7 @@ import mysql.connector
 from tkinter import *
 from tkinter import messagebox
 
+
 #Connect to the database
 db=mysql.connector.connect(
 host="localhost",

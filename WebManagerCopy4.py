@@ -13,14 +13,15 @@ import mysql.connector
 from tkinter import *
 from tkinter import messagebox
 
+
 #Connect to the database
 db=mysql.connector.connect(
-                            host="localhost",
-                            user="Lam",
-                            passwd="waterBell$73",
-                            database="appData"
-                        )
-
+host="localhost",
+user="Lam",
+passwd="waterBell$73",
+database="appData"
+)
+#Cursor that executes statements
 myCursor=db.cursor()
 
 class Ui_MainWindow(object):
@@ -363,13 +364,12 @@ class Ui_MainWindow(object):
         highestClickApps=self.getHighestClickApps()
 
         #Move the highest clicked apps 
-        #Make the list global so other functions can use the list of the coordinates
-        global highestClickedAppLocations,highestClickedAppsLabelObjs
-        highestClickedAppLocations,highestClickedAppsLabelObjs=self.moveReccomendedApps(highestClickApps)
-        #print(highestClickedAppLocations)
+        global highestClickedAppsLabelObjs #Make the list global so other functions can use the lists 
+        highestClickedAppsLabelObjs=self.moveReccomendedApps(highestClickApps)
 
         global locationsDict
-        locationsDict={self.outlookLabel:(40,80),
+        #Stores the label objects and their initial locations(hard coded coordinates, since label.x() and label.y() continuously update)
+        locationsDict={self.outlookLabel:(40,80), #Personal apps
         self.youtubeLabel:(160,80),
         self.googleLabel:(520,80),
         self.twitterLabel:(400,80),
@@ -378,11 +378,11 @@ class Ui_MainWindow(object):
         self.linkedinLabel:(280,200),
         self.googleCalLabel:(280,80),
 
-        self.canvasLabel:(40,80),
+        self.canvasLabel:(40,80),                   #Penn State apps
         self.lionpathLabel:(160,80),
         self.bulletinLabel:(280,80),
 
-        self.chelseaLabel:(40,80),
+        self.chelseaLabel:(40,80),                  #Other apps
         self.typingLabel:(160,80)}
 
         #Display the current date and time
@@ -391,7 +391,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Lam's WindowManager"))
         self.personalTextLabel.setText(_translate("MainWindow", "Personal"))
         self.pennStateTextLabel.setText(_translate("MainWindow", "Penn State"))
         self.otherTextLabel.setText(_translate("MainWindow", "Other"))
@@ -399,15 +399,15 @@ class Ui_MainWindow(object):
         self.dateLabel.setText(_translate("MainWindow", "Date"))
         self.reccomendedTextLabel.setText(_translate("MainWindow", "Reccomended"))
 
-    #Change background from main to personal
     def changeBackgroundPersonal(self,event):
+        #Change the background of the window
         self.MainBackgroundLabel.setPixmap(QtGui.QPixmap("personalBackground.jpg"))
         #Change the heading of the page
         self.homeTextLabel.setText("Personal")
         #Show the personal apps
         mainBool=False
         self.hideOrUnhidePersonalApps(mainBool)
-        #Hide the folders and text by calling this function defined down below
+        #Hide the folders,text, and other things by calling this function defined down below
         mainBool=True
         self.hideOrUnhideFoldersAndText(mainBool)
         #Show the home button
@@ -416,32 +416,21 @@ class Ui_MainWindow(object):
         personalObjs=[self.outlookLabel,self.youtubeLabel,self.googleLabel,self.googleCalLabel,self.twitterLabel,self.docsLabel,
         self.sheetsLabel,self.linkedinLabel]
 
-        #Move the reccomended apps back to their original locations
+        #Move the personal apps to their original locations
         for obj in personalObjs:
+            #Each value in the dictionary is a tuple consisting of (x,y)
             xCoord=locationsDict[obj][0]
             yCoord=locationsDict[obj][1]
             obj.setGeometry(QtCore.QRect(xCoord, yCoord, 60, 60))
-
         
-        #print("from changeMainBackgroundPersonal",highestClickedAppsLabelObjs[0].objectName(),highestClickedAppsLabelObjs[1].objectName())
-        for i,labelObj in enumerate(highestClickedAppsLabelObjs):
-            #xCoord=highestClickedAppLocations[i][0]
-            #yCoord=highestClickedAppLocations[i][1]
-            #print(xCoord,yCoord)
+        #Iterate through each app in the list of highest clicked apps
+        for labelObj in highestClickedAppsLabelObjs:
+            #Hide the app if it's not a personal app
             if labelObj not in personalObjs:
-                #Get the previous x and y coords of each app
-                
-                #labelObj.setGeometry(QtCore.QRect(xCoord, yCoord, 60, 60))
                 labelObj.setHidden(True)
-            #else:
-                #print('TRIGGERED PERSONAL')
-                
         
-        
-        
-        
-    #Change background from main to penn state
     def changeBackgroundPennState(self,event):
+        #Change the background of the window
         self.MainBackgroundLabel.setPixmap(QtGui.QPixmap("PennStateBackground.jpg"))
         #Change the heading of the page
         self.homeTextLabel.setText("Penn State")
@@ -455,34 +444,22 @@ class Ui_MainWindow(object):
         self.homeButtonLabel.setHidden(False)
 
         pennStateObjs=[self.canvasLabel,self.lionpathLabel,self.bulletinLabel]
-        #Move the reccomended apps back to their original locations
+        #Move the penn state apps to their original locations
         for obj in pennStateObjs:
+            #Each value in the dictionary is a tuple consisting of (x,y)
             xCoord=locationsDict[obj][0]
             yCoord=locationsDict[obj][1]
-            print(obj.objectName,xCoord,yCoord)
             obj.setGeometry(QtCore.QRect(xCoord, yCoord, 60, 60))
-        
-        #global highestClickedAppsLabelObjs,highestClickedAppLocations
-        #print("from changeMainBackgroundPennState",highestClickedAppsLabelObjs[0].objectName(),highestClickedAppsLabelObjs[1].objectName())
-        for i,labelObj in enumerate(highestClickedAppsLabelObjs):
+
+        #Iterate through each app in the list of highest clicked apps
+        for labelObj in highestClickedAppsLabelObjs:
+            #Hide the app if it's not a penn state app
             if labelObj not in pennStateObjs:
-                print('TRIGGERED PENN STATE')
-                #Get the previous x and y coords of each app
-                #xCoord=highestClickedAppLocations[i][0]
-                #yCoord=highestClickedAppLocations[i][1]
-                #print(xCoord,yCoord) #400 for y
-                #abelObj.setGeometry(QtCore.QRect(xCoord, yCoord, 60, 60))
-                labelObj.setHidden(TRUE)
-            #else:
-                #print("TRIGGERED")
-                
-                #labelObj.setHidden(TRUE)
-       
-
+                labelObj.setHidden(True)
         
 
-    #Change background from main to other
     def changeBackgroundOther(self,event):
+        #Change the background of the window
         self.MainBackgroundLabel.setPixmap(QtGui.QPixmap("otherBackground.jpg"))
         #Change the heading of the page
         self.homeTextLabel.setText("Other")
@@ -496,28 +473,22 @@ class Ui_MainWindow(object):
         self.homeButtonLabel.setHidden(False)
 
         otherObjs=[self.typingLabel,self.chelseaLabel]
-        #Move the reccomended apps back to their original locations
+        #Move the other apps to their original locations
         for obj in otherObjs:
+            #Each value in the dictionary is a tuple consisting of (x,y)
             xCoord=locationsDict[obj][0]
             yCoord=locationsDict[obj][1]
-            print(obj.objectName,xCoord,yCoord)
             obj.setGeometry(QtCore.QRect(xCoord, yCoord, 60, 60))
-        
-        for i,labelObj in enumerate(highestClickedAppsLabelObjs):
+
+        #Iterate through each app in the list of highest clicked apps
+        for labelObj in highestClickedAppsLabelObjs:
+            #Hide the app if it's not an other app
             if labelObj not in otherObjs:
-                #Get the previous x and y coords of each app
-                #xCoord=highestClickedAppLocations[i][0]
-                #yCoord=highestClickedAppLocations[i][1]
-
-                #labelObj.setGeometry(QtCore.QRect(xCoord, yCoord, 60, 60))
                 labelObj.setHidden(True)
-            #else:
-                
-   
+        
 
-
-    #Change background from wherever to main
     def changeBackgroundMain(self,event):
+        #Change the background of the window
         self.MainBackgroundLabel.setPixmap(QtGui.QPixmap("mainBackground.jpg"))
         #Change the heading of the page
         self.homeTextLabel.setText("Home")
@@ -536,14 +507,11 @@ class Ui_MainWindow(object):
         highestClickApps=self.getHighestClickApps()
 
         #Move the highest clicked apps 
-        #Make the list global so other functions can use the list of the coordinates
-        #global highestClickedAppLocations,highestClickedAppsLabelObjs
-        locations,labelObjs=self.moveReccomendedApps(highestClickApps)
-        #print("From changeMainBackground",locations,labelObjs[0].objectName(),labelObjs[1].objectName())
+        labelObjs=self.moveReccomendedApps(highestClickApps)
 
         #When modifying global variables, declare them as global too
-        global highestClickedAppLocations,highestClickedAppsLabelObjs
-        highestClickedAppLocations,highestClickedAppsLabelObjs=locations,labelObjs
+        global highestClickedAppsLabelObjs
+        highestClickedAppsLabelObjs=labelObjs
 
 
     #Opening links
@@ -650,7 +618,6 @@ class Ui_MainWindow(object):
 
     #Also returns the locations of the previous apps
     def moveReccomendedApps(self,highestClickApps):
-        
         #A dictionary that maps each column in the table to its corresponding label
         apps={"Outlook":self.outlookLabel,"Google":self.googleLabel,"Twitter":self.twitterLabel, "Youtube":self.youtubeLabel,
         "Docs":self.docsLabel,"Sheets":self.sheetsLabel,"Linkedin":self.linkedinLabel,"Google Calendar":self.googleCalLabel,
@@ -666,13 +633,10 @@ class Ui_MainWindow(object):
            
             #Get the coordinates of the app
             appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(objLabel)
-            if appYCoord==400:
-                mainAppCoords=highestClickedAppLocations
-            else:
-                #Create the tuple of the coordinates and append to the list
-                appCoords=(appXCoord,appYCoord)
-                mainAppCoords.append(appCoords)
-
+            
+            #Create the tuple of the coordinates and append to the list
+            appCoords=(appXCoord,appYCoord)
+            mainAppCoords.append(appCoords)
             labelObjs.append(objLabel)
 
             #Move the first app to the correct location(leftmost on the gui)
@@ -682,11 +646,10 @@ class Ui_MainWindow(object):
             else:
                 objLabel.setGeometry(QtCore.QRect(110, 400, 60, 60))
 
-            #Unhide the apps from the main webpage(special case)
+            #Unhide the apps from the main webpage to see reccomended apps(special case)
             objLabel.setHidden(False)
 
-        print("After move:",labelObjs[0].objectName(),labelObjs[1].objectName(),mainAppCoords)
-        return mainAppCoords,labelObjs
+        return labelObjs
 
     def showAllAppClicks(self,event):
         #Select all of the columns from the table order by clicks from highest to lowest
@@ -749,322 +712,138 @@ class Ui_MainWindow(object):
     #Functions for making folders and apps larger when hovered
     #Folders
     def makeOtherFolderLarger(self,event):
-        self.OtherFolderLabel.setGeometry(QtCore.QRect(460, 70, 140, 210))
-        self.OtherFolderLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.OtherFolderLabel)
 
     def makeOtherFolderSmaller(self,event):
-        self.OtherFolderLabel.setGeometry(QtCore.QRect(470, 80, 120, 190))
+        self.makeButtonSmaller(self.OtherFolderLabel)
 
     def makePennStateFolderLarger(self,event):
-        self.PennStateFolderLabel.setGeometry(QtCore.QRect(250, 70, 140, 210))
-        self.PennStateFolderLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.PennStateFolderLabel)
 
     def makePennStateFolderSmaller(self,event):
-        self.PennStateFolderLabel.setGeometry(QtCore.QRect(260, 80, 120, 190))
+        self.makeButtonSmaller(self.PennStateFolderLabel)
 
     def makePersonalFolderLarger(self,event):
-        self.personalFolderLabel.setGeometry(QtCore.QRect(30, 70, 140, 210))
-        self.personalFolderLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.personalFolderLabel)
 
     def makePersonalFolderSmaller(self,event):
-        self.personalFolderLabel.setGeometry(QtCore.QRect(40, 80, 120, 190))
+        self.makeButtonSmaller(self.personalFolderLabel)
 
     #Home Button
     def makeHomeButtonLarger(self,event):
-        self.homeButtonLabel.setGeometry(QtCore.QRect(560, 400, 80, 80))
-        self.homeButtonLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.homeButtonLabel)
 
     def makeHomeButtonSmaller(self,event):
-        self.homeButtonLabel.setGeometry(QtCore.QRect(570, 410, 60, 60))
+        self.makeButtonSmaller(self.homeButtonLabel)
 
     #Personal Apps
     #Outlook App
     def makeOutlookButtonLarger(self,event):
-        #Get the object of the label
-        labelObj=self.outlookLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.outlookLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.outlookLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.outlookLabel)
 
     def makeOutlookButtonSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.outlookLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.outlookLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.outlookLabel)
 
     #Youtube App
     def makeYoutubeButtonLarger(self,event):
-        #Get the object of the label
-        labelObj=self.youtubeLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.youtubeLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.youtubeLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.youtubeLabel)
 
     def makeYoutubeButtonSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.youtubeLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.youtubeLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.youtubeLabel)
 
     #Google Calendar App
     def makeGoogleCalButtonLarger(self,event):
-        #Get the object of the label
-        labelObj=self.googleCalLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.googleCalLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.googleCalLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.googleCalLabel)
 
     def makeGoogleCalButtonSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.googleCalLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.googleCalLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.googleCalLabel)
 
     #Twitter App
     def makeTwitterButtonLarger(self,event):
-        #Get the object of the label
-        labelObj=self.twitterLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.twitterLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.twitterLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.twitterLabel)
 
     def makeTwitterButtonSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.twitterLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.twitterLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.twitterLabel)
 
     #Google App
     def makeGoogleButtonLarger(self,event):
-        #Get the object of the label
-        labelObj=self.googleLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.googleLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.googleLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.googleLabel)
 
     def makeGoogleButtonSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.googleLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.googleLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+       self.makeButtonSmaller(self.googleLabel)
 
     #Docs App
     def makeDocsButtonLarger(self,event):
-        #Get the object of the label
-        labelObj=self.docsLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.docsLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.docsLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.docsLabel)
 
     def makeDocsButtonSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.docsLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.docsLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+       self.makeButtonSmaller(self.docsLabel)
     
     #Sheets App
     def makeSheetsButtonLarger(self,event):
-        #Get the object of the label
-        labelObj=self.sheetsLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.sheetsLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.sheetsLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.sheetsLabel)
 
     def makeSheetsButtonSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.sheetsLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.sheetsLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.sheetsLabel)
     
     #Linkedin App
     def makeLinkedinButtonLarger(self,event):
-        #Get the object of the label
-        labelObj=self.linkedinLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.linkedinLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.linkedinLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.linkedinLabel)
 
     def makeLinkedinButtonSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.linkedinLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.linkedinLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.linkedinLabel)
     
     #Penn State Apps
     #Canvas App
     def makeCanvasLarger(self,event):
-        #Get the object of the label
-        labelObj=self.canvasLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.canvasLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.canvasLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.canvasLabel)
 
     def makeCanvasSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.canvasLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.canvasLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.canvasLabel)
 
     #Lionpath App
     def makeLionpathLarger(self,event):
-        #Get the object of the label
-        labelObj=self.lionpathLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.lionpathLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.lionpathLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.lionpathLabel)
 
     def makeLionpathSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.lionpathLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.lionpathLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.lionpathLabel)
 
     #Bulletin App
     def makeBulletinLarger(self,event):
-        #Get the object of the label
-        labelObj=self.bulletinLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.bulletinLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.bulletinLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.bulletinLabel)
 
     def makeBulletinSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.bulletinLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.bulletinLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.bulletinLabel)
 
     #Other Apps
     #Chelsea App
     def makeChelseaLarger(self,event):
-        #Get the object of the label
-        labelObj=self.chelseaLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.chelseaLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.chelseaLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.chelseaLabel)
 
     def makeChelseaSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.chelseaLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.chelseaLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.chelseaLabel)
 
     #Typing App
     def makeTypingLarger(self,event):
-        #Get the object of the label
-        labelObj=self.typingLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.typingLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.typingLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.typingLabel)
 
     def makeTypingmaller(self,event):
-        #Get the name of the label
-        labelObj=self.typingLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.typingLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.typingLabel)
 
     #Other Buttons
     #View Button
     def makeViewLarger(self,event):
-        #Get the object of the label
-        labelObj=self.viewLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.viewLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.viewLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.viewLabel)
 
     def makeViewSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.viewLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.viewLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.viewLabel)
         
-    #View Button
+    #Refresh Button
     def makeRefreshLarger(self,event):
-        #Get the object of the label
-        labelObj=self.refreshLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        #Shift location of app down and expand width and height
-        self.refreshLabel.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
-        self.refreshLabel.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.makeButtonLarger(self.refreshLabel)
 
     def makeRefreshSmaller(self,event):
-        #Get the name of the label
-        labelObj=self.refreshLabel
-        #Call this function to get the coordinates, dimensions, and scales for the label
-        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
-
-        self.refreshLabel.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        self.makeButtonSmaller(self.refreshLabel)
 
     #Function for getting app coordinates and dimensions
     def getAppCoordinatesAndDimensions(self,labelObj):
@@ -1077,6 +856,22 @@ class Ui_MainWindow(object):
         scaleDimensions=20
 
         return appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions
+
+    def makeButtonLarger(self,labelObj):
+        #Call this function to get the coordinates, dimensions, and scales for the label passing in the label object
+        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
+
+        #Shift location of app down and expand width and height
+        labelObj.setGeometry(QtCore.QRect(appXCoord-scaleCoord, appYCoord-scaleCoord, appWidth+scaleDimensions, appHeight+scaleDimensions))
+        labelObj.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+
+    def makeButtonSmaller(self,labelObj):
+        #Call this function to get the coordinates, dimensions, and scales for the label
+        appXCoord,appYCoord,appWidth,appHeight,scaleCoord,scaleDimensions=self.getAppCoordinatesAndDimensions(labelObj)
+
+        #Shift app back to original location
+        labelObj.setGeometry(QtCore.QRect(appXCoord+scaleCoord, appYCoord+scaleCoord, appWidth-scaleDimensions, appHeight-scaleDimensions))
+        
 
 
 if __name__ == "__main__":
