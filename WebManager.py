@@ -18,7 +18,7 @@ from tkinter import messagebox
 db=mysql.connector.connect(
 host="localhost",
 user="Lam",
-passwd="waterBell$73",
+passwd="apple",
 database="appData"
 )
 #Cursor that executes statements
